@@ -30,6 +30,7 @@ exists on the mainline kernel and is regularly maintained.
 bluetooth-next kernel
 =====================
 http://git.kernel.org/cgit/linux/kernel/git/bluetooth/bluetooth-next.git
+
 Mirror: https://github.com/kmaloor/bluetooth-next-mirror
 
 Kernel tree updated by bluetooth and 6Lo sub-system maintainers with the newest features  that don't yet exist on the mainline.
@@ -56,16 +57,26 @@ Building and deploying Yocto OS image
 
 ...
 BBLAYERS ?= " \
-  /home/.../pi/poky/meta \
-  /home/.../pi/poky/meta-yocto \
-  /home/.../pi/poky/meta-yocto-bsp \
-  /home/.../pi/raspberrypi2b/meta-raspberrypi \
-  /home/.../pi/raspberrypi2b/meta-rpi26lo \
+
+            /home/.../pi/poky/meta \
+  
+            /home/.../pi/poky/meta-yocto \
+  
+            /home/.../pi/poky/meta-yocto-bsp \
+  
+            /home/.../pi/raspberrypi2b/meta-raspberrypi \
+  
+            /home/.../pi/raspberrypi2b/meta-rpi26lo \
+  
 
 6) vi build/conf/local.conf
+
 ...
+
 MACHINE ??= "raspberrypi2"
+
 BB_NUMBER_THREADS = "12" (optional)
+
 ...
 
 7) bitbake rpi-hwup-image
@@ -80,14 +91,19 @@ Booting into OS image on Rpi
 Insert SD card into slot and plug in the serial console cable. 
 
 sudo screen /dev/ttyUSB0 115200
+
 ...
+
 ...
+
 done.
+
 Starting syslogd/klogd: done
 
 Poky (Yocto Project Reference Distro) 1.7.2 raspberrypi2 /dev/ttyAMA0
 
 raspberrypi2 login: root
+
 root@raspberrypi2:~# 
 
 Misc. Rpi2 Resources
