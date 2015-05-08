@@ -1,5 +1,5 @@
-SUMMARY = "linux-wpan"
-DESCRIPTION = "wpan tools"
+SUMMARY = "linux-wpan tools to configure the IEEE 802.15.4 WPAN interface."
+DESCRIPTION = "Provides the iwpan tool (based on iw) to set up the wpan%d interface. It does this by accessinfg the nl802154 netlink interface."
 DEPENDS = "libnl"
 LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://COPYING;md5=4c90a0ebb6b0b86b0ab38254fc853b57"

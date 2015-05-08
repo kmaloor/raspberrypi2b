@@ -1,4 +1,3 @@
-# Include modules in rootfs
 KERNEL_DEVICETREE = " \
     bcm2709-rpi-2-b.dtb \
     "

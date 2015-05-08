@@ -1,0 +1,5 @@
+recipes-core: .bbappend for rpi-hwup-image which adds few required packages to the OS image and overrides KERNEL_DEVICETREE from machine config.
+
+recipes-kernel: Recipe to build bluetooth-next kernel tree for Raspberry Pi 2B. Kernel configuration enables all required IEEE 802.15.4/6LoWPAN features.
+
+recipes-tools: Recipe for tcpdump (obtained from the OpenEmbedded repository) and wpan-tools (iwpan).
