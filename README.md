@@ -71,7 +71,7 @@ Building and deploying Yocto OS image
 4) source poky/oe-init-build-env
 
 5) vi build/conf/bblayers.conf
-
+```
 ...
 BBLAYERS ?= " \
 
@@ -84,10 +84,11 @@ BBLAYERS ?= " \
             /home/.../pi/raspberrypi2b/meta-raspberrypi \
   
             /home/.../pi/raspberrypi2b/meta-rpi26lo \
-  
+...
+```
 
 6) vi build/conf/local.conf
-
+```
 ...
 
 MACHINE ??= "raspberrypi2"
@@ -95,7 +96,7 @@ MACHINE ??= "raspberrypi2"
 BB_NUMBER_THREADS = "12" (optional)
 
 ...
-
+```
 7) bitbake rpi-hwup-image
 
 8) cd build/tmp/deploy/images/raspberrypi2
@@ -139,7 +140,7 @@ The patch currently doesn't enable Raspberry Pi's audio/video drivers, and the o
 AT86RF233 Device Tree Spec
 ==========================
 For reference, this is the device tree description for the module and its interface to the Raspberry Pi.
-
+```
 &spi0 {
 
         pinctrl-names = "default";
@@ -169,13 +170,13 @@ For reference, this is the device tree description for the module and its interf
         };
         
 };
-
+```
 6LoWPAN over 802.15.4: Creating a lowpan interface
 ==================================================
 View all netwrk interfaces:
 
 root@raspberrypi2:~# ip a
-
+```
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue 
 
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -191,7 +192,7 @@ root@raspberrypi2:~# ip a
 3: wpan0: <BROADCAST,NOARP> mtu 127 qdisc noop qlen 300
 
     link/[804] 71:7b:10:8c:84:e2:2e:22 brd ff:ff:ff:ff:ff:ff:ff:ff
-
+```
 Create a lowpan%d (6LoWPAN) interface:
 
 root@raspberrypi2:~# ip link add link wpan0 name lowpan0 type lowpan
@@ -205,7 +206,7 @@ root@raspberrypi2:~# ifconfig lowpan0 up
 View all active interfaces:
 
 root@raspberrypi2:~# ifconfig
-
+```
 ...
 
 lowpan0   Link encap:UNSPEC  HWaddr 71-7B-10-8C-84-E2-2E-22-00-00-00-00-00-00-00-00  
@@ -224,7 +225,7 @@ wpan0     Link encap:UNSPEC  HWaddr 71-7B-10-8C-84-E2-2E-22-00-00-00-00-00-00-00
           TX packets:8 errors:0 dropped:0 overruns:0 carrier:0
           collisions:0 txqueuelen:300 
           RX bytes:0 (0.0 B)  TX bytes:397 (397.0 B)
-          
+```          
 Notice that wpan0 has an MTU size of 127 whereas lowpan0 has an MTU size of 1280. It is the interface 
 for transporting IPv6 traffic. 
 
@@ -233,7 +234,7 @@ wpan%d configuration using wpan tools
 View wpan0 settings:
 
 root@raspberrypi2:~# iwpan dev wpan0 info
-
+```
 Interface wpan0
 
         ifindex 3
@@ -247,7 +248,7 @@ Interface wpan0
         max_be 5
         max_csma_backoffs 4
         lbt 0
-
+```
 Set 16-bit PAN id:
 
 root@raspberrypi2:~# iwpan dev wpan0 set pan_id 0xacdc
@@ -259,7 +260,7 @@ root@raspberrypi2:~# iwpan dev wpan0 set short_addr 0xabba
 View current settings:
 
 root@raspberrypi2:~# iwpan dev wpan0 info
-
+```
 Interface wpan0
 
         ifindex 3
@@ -273,7 +274,7 @@ Interface wpan0
         max_be 5
         max_csma_backoffs 4
         lbt 0
-
+```
 Two nodes can see each other if they're in the same PAN (PAN ids match).
 
 Misc. Rpi2 Resources
