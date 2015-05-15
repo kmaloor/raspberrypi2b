@@ -276,8 +276,11 @@ IPv6 address.
 
 Discover nodes in the same PAN
 ==============================
+
 If we have two nodes set up as follows:
+
 node 1:
+
 root@raspberrypi2:~# iwpan dev wpan0 info
 ```
 Interface wpan0
@@ -294,6 +297,7 @@ Interface wpan0
         lbt 0
 ```
 node 2:
+
 root@raspberrypi2:~# iwpan dev wpan0 info
 ```
 Interface wpan0
@@ -315,6 +319,7 @@ We can now ping the multicast address of all link-local nodes using the 6LoWPAN 
 on node 1, and see a response from the 6LoWPAN interface on node 2 (and vice-versa)
 
 node 1:
+
 root@raspberrypi2:~# ping6 -I lowpan0 ff02::1
 ```
 PING ff02::1 (ff02::1): 56 data bytes
