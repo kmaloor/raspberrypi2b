@@ -12,6 +12,7 @@ Contents
 * wpan%d configuration using wpan tools
 * 6LoWPAN over 802.15.4: Creating a lowpan interface
 * Discover nodes in the same PAN
+* Packet capture at 802.15.4 interface
 * Misc. Rpi2 Resources
 
 This repository contains 2 Yocto layers with recipes to construct a Linux image for the Raspberry Pi 2 B for developing, testing and exercising the newest features of the 6LoWPAN / IEEE 802.15.4 implmenetation on Linux.
@@ -331,6 +332,26 @@ PING ff02::1 (ff02::1): 56 data bytes
 64 bytes from fe80::ed99:2aa1:41c5:4b92: seq=2 ttl=64 time=15.400 ms (DUP!)
 ...
 ```
+
+Packet capture at 802.15.4 interface
+====================================
+We can use tcpdump for packet capture. It is already included into the OS image.
+
+The following command captures 100 packets on node 1.
+
+Ping the multicast address on node 2 to generate traffic.
+
+root@raspberrypi2:~# tcpdump -c 100 -w 154capture.pcap -i wpan0
+```
+[ 1146.144932] device wpan0 entered promiscuous mode
+tcpdump: listening on wpan0, link-type IEEE802_15_4_NOFCS (IEEE 802.15.4 without FCS), capture size 262144 bytes
+100 packets captured
+100 [ 1207.146391] device wpan0 left promiscuous mode
+packets received by filter
+0 packets dropped by kernel
+```
+
+You can mount a USB drive to copy the .pcap file. The captured packets may then be viewed using wireshark.
 
 Misc. Rpi2 Resources
 ====================
