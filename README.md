@@ -13,6 +13,7 @@ Contents
 * 6LoWPAN over 802.15.4: Creating a lowpan interface
 * Discover nodes in the same PAN
 * Packet capture at 802.15.4 interface
+* Sniffing 802.15.4 traffic
 * Misc. Rpi2 Resources
 
 This repository contains 2 Yocto layers with recipes to construct a Linux image for the Raspberry Pi 2 B for developing, testing and exercising the newest features of the 6LoWPAN / IEEE 802.15.4 implmenetation on Linux.
@@ -339,7 +340,7 @@ We can use tcpdump for packet capture. It is already included into the OS image.
 
 The following command captures 100 packets on node 1.
 
-Ping the multicast address on node 2 to generate traffic.
+Ping the multicast address at the lowpan0 interface on node 2 to generate some traffic.
 
 root@raspberrypi2:~# tcpdump -c 100 -w 154capture.pcap -i wpan0
 ```
@@ -351,6 +352,63 @@ packets received by filter
 0 packets dropped by kernel
 ```
 
+You can mount a USB drive to copy the .pcap file. The captured packets may then be viewed using wireshark.
+
+Sniffing 802.15.4 traffic
+=========================
+Follow the instructions from http://wpan.cakelab.org/ to set up a monitor interface on
+node 1. 
+
+The instructions are posted here for your convenience.
+
+Do the following on node 1.
+
+1) To sniff first remove the wpan interface which sits on top of the wpan phy. 
+
+You will get a list of all current running phy interface with:
+```
+iwpan dev
+```
+then delete the wpan0 interface with:
+```
+iwpan dev wpan0 del
+```
+Finally create a monitor interface:
+```
+iwpan phy phy0 interface add monitor0 type monitor
+```
+This should now be visible as follows:
+
+root@raspberrypi2:~# ip a
+```
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc pfifo_fast qlen 1000
+    link/ether b8:27:eb:9e:3c:b3 brd ff:ff:ff:ff:ff:ff
+5: monitor0: <BROADCAST,NOARP> mtu 127 qdisc noop qlen 300
+    link/[805] 00:00:00:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff:ff:ff
+```
+Bring up the monitor0 interface using:
+
+root@raspberrypi2:~# ifconfig monitor0 up
+
+We can now use tcpdump to capture packats at the monitor0 interface on node 1.
+
+We can ping the multicast address at the lowpan0 interface on node 2 to generate some traffic.
+
+root@raspberrypi2:~# tcpdump -c 100 -w sniff.pcap -i monitor0
+```
+[ 2358.724906] device monitor0 entered promiscuous mode
+tcpdump: listening on monitor0, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes
+100 packets captured
+100 [ 2471.726329] device monitor0 left promiscuous mode
+packets received by filter
+0 packets dropped by kernel
+```
 You can mount a USB drive to copy the .pcap file. The captured packets may then be viewed using wireshark.
 
 Misc. Rpi2 Resources
