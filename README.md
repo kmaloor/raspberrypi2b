@@ -9,8 +9,9 @@ Contents
 * Booting into OS image on Rpi
 * Raspberry Pi 2 B Kernel Patch
 * AT86RF233 Device Tree Spec
-* 6LoWPAN over 802.15.4: Creating a lowpan interface
 * wpan%d configuration using wpan tools
+* 6LoWPAN over 802.15.4: Creating a lowpan interface
+* Discover nodes in the same PAN
 * Misc. Rpi2 Resources
 
 This repository contains 2 Yocto layers with recipes to construct a Linux image for the Raspberry Pi 2 B for developing, testing and exercising the newest features of the 6LoWPAN / IEEE 802.15.4 implmenetation on Linux.
@@ -171,6 +172,49 @@ For reference, this is the device tree description for the module and its interf
         
 };
 ```
+
+wpan%d configuration using wpan tools
+=====================================
+View wpan0 settings:
+
+root@raspberrypi2:~# iwpan dev wpan0 info
+```
+Interface wpan0
+        ifindex 3
+        wpan_dev 0x1
+        extended_addr 0xef992aa141c54b92
+        short_addr 0xffff
+        pan_id 0xffff
+        type node
+        max_frame_retries -1
+        min_be 3
+        max_be 5
+        max_csma_backoffs 4
+        lbt 0
+```
+Set 16-bit PAN id:
+
+root@raspberrypi2:~# iwpan dev wpan0 set pan_id 0xacdc
+
+View current settings:
+
+root@raspberrypi2:~# iwpan dev wpan0 info
+```
+Interface wpan0
+        ifindex 3
+        wpan_dev 0x1
+        extended_addr 0xef992aa141c54b92
+        short_addr 0xffff
+        pan_id 0xacdc
+        type node
+        max_frame_retries -1
+        min_be 3
+        max_be 5
+        max_csma_backoffs 4
+        lbt 0
+```
+Two nodes can see each other if they're in the same PAN (PAN ids match).
+
 6LoWPAN over 802.15.4: Creating a lowpan interface
 ==================================================
 View all netwrk interfaces:
@@ -227,46 +271,20 @@ wpan0     Link encap:UNSPEC  HWaddr 71-7B-10-8C-84-E2-2E-22-00-00-00-00-00-00-00
           RX bytes:0 (0.0 B)  TX bytes:397 (397.0 B)
 ```          
 Notice that wpan0 has an MTU size of 127 whereas lowpan0 has an MTU size of 1280. It is the interface 
-for transporting IPv6 traffic. 
+for transporting IPv6 traffic. Also note that the lowpan0 interface is configured with a link-local
+IPv6 address.
 
-wpan%d configuration using wpan tools
-=====================================
-View wpan0 settings:
-
+Discover nodes in the same PAN
+==============================
+If we have two nodes set up as follows:
+node 1:
 root@raspberrypi2:~# iwpan dev wpan0 info
 ```
 Interface wpan0
-
         ifindex 3
         wpan_dev 0x1
-        extended_addr 0x717b108c84e22e22
+        extended_addr 0x4a1c6e57f6fdff5c
         short_addr 0xffff
-        pan_id 0xffff
-        type node
-        max_frame_retries -1
-        min_be 3
-        max_be 5
-        max_csma_backoffs 4
-        lbt 0
-```
-Set 16-bit PAN id:
-
-root@raspberrypi2:~# iwpan dev wpan0 set pan_id 0xacdc
-
-Set 16-bit short address:
-
-root@raspberrypi2:~# iwpan dev wpan0 set short_addr 0xabba
-
-View current settings:
-
-root@raspberrypi2:~# iwpan dev wpan0 info
-```
-Interface wpan0
-
-        ifindex 3
-        wpan_dev 0x1
-        extended_addr 0x717b108c84e22e22
-        short_addr 0xabba
         pan_id 0xacdc
         type node
         max_frame_retries -1
@@ -275,7 +293,39 @@ Interface wpan0
         max_csma_backoffs 4
         lbt 0
 ```
-Two nodes can see each other if they're in the same PAN (PAN ids match).
+node 2:
+root@raspberrypi2:~# iwpan dev wpan0 info
+```
+Interface wpan0
+        ifindex 3
+        wpan_dev 0x1
+        extended_addr 0xef992aa141c54b92
+        short_addr 0xffff
+        pan_id 0xacdc
+        type node
+        max_frame_retries -1
+        min_be 3
+        max_be 5
+        max_csma_backoffs 4
+        lbt 0
+```
+We can see that the 802.15.4 interfaces on both nodes are configured with the same PAN ID.
+
+We can now ping the multicast address of all link-local nodes using the 6LoWPAN interface
+on node 1, and see a response from the 6LoWPAN interface on node 2 (and vice-versa)
+
+node 1:
+root@raspberrypi2:~# ping6 -I lowpan0 ff02::1
+```
+PING ff02::1 (ff02::1): 56 data bytes
+64 bytes from fe80::481c:6e57:f6fd:ff5c: seq=0 ttl=64 time=0.535 ms
+64 bytes from fe80::ed99:2aa1:41c5:4b92: seq=0 ttl=64 time=15.985 ms (DUP!)
+64 bytes from fe80::481c:6e57:f6fd:ff5c: seq=1 ttl=64 time=0.232 ms
+64 bytes from fe80::ed99:2aa1:41c5:4b92: seq=1 ttl=64 time=15.484 ms (DUP!)
+64 bytes from fe80::481c:6e57:f6fd:ff5c: seq=2 ttl=64 time=0.229 ms
+64 bytes from fe80::ed99:2aa1:41c5:4b92: seq=2 ttl=64 time=15.400 ms (DUP!)
+...
+```
 
 Misc. Rpi2 Resources
 ====================
